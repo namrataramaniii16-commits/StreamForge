@@ -1,7 +1,9 @@
 from kafka import KafkaProducer
+from truck_data import TRUCKS, LOCATIONS
+
 import json
-import time
 import random
+import time
 from datetime import datetime
 
 producer = KafkaProducer(
@@ -11,21 +13,20 @@ producer = KafkaProducer(
 
 print("Connected to Kafka successfully!\n")
 
-# 50 trucks
-trucks = [f"TRK{str(i).zfill(3)}" for i in range(1, 51)]
-
-# Truck locations
-locations = [
-    "Mumbai", "Pune", "Nagpur", "Nashik", "Thane",
-    "Aurangabad", "Kolhapur", "Solapur", "Amravati", "Jalgaon"
-]
-
 try:
     while True:
+
+        truck = random.choice(TRUCKS)
+
         message = {
-            "truck_id": random.choice(trucks),
+            "truck_id": truck["truck_id"],
+            "driver": truck["driver"],
+            "route": truck["route"],
+            "current_location": random.choice(LOCATIONS),
+            "speed": random.randint(40, 90),
+            "fuel_level": random.randint(20, 100),
             "temperature": round(random.uniform(18.0, 35.0), 2),
-            "location": random.choice(locations),
+            "status": truck["status"],
             "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         }
 
@@ -33,17 +34,22 @@ try:
         producer.flush()
 
         print("=" * 60)
-        print("Truck Data Sent")
-        print(f"Truck ID    : {message['truck_id']}")
-        print(f"Temperature : {message['temperature']} °C")
-        print(f"Location    : {message['location']}")
-        print(f"Timestamp   : {message['timestamp']}")
+        print("🚚 Truck Data Sent")
+        print(f"Truck ID         : {message['truck_id']}")
+        print(f"Driver           : {message['driver']}")
+        print(f"Route            : {message['route']}")
+        print(f"Current Location : {message['current_location']}")
+        print(f"Speed            : {message['speed']} km/h")
+        print(f"Fuel Level       : {message['fuel_level']}%")
+        print(f"Temperature      : {message['temperature']}°C")
+        print(f"Status           : {message['status']}")
+        print(f"Timestamp        : {message['timestamp']}")
         print("=" * 60)
 
         time.sleep(2)
 
 except KeyboardInterrupt:
-    print("\nProducer stopped.")
+    print("\nProducer stopped by user.")
 
 finally:
     producer.close()
