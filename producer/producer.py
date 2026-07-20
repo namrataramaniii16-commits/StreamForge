@@ -11,7 +11,7 @@ producer = KafkaProducer(
     value_serializer=lambda v: json.dumps(v).encode("utf-8")
 )
 
-print("Connected to Kafka successfully!\n")
+print("✅ Connected to Kafka successfully!\n")
 
 try:
     while True:
@@ -33,23 +33,22 @@ try:
         producer.send("truck-data", value=message)
         producer.flush()
 
-        print("=" * 60)
-        print("🚚 Truck Data Sent")
-        print(f"Truck ID         : {message['truck_id']}")
-        print(f"Driver           : {message['driver']}")
-        print(f"Route            : {message['route']}")
-        print(f"Current Location : {message['current_location']}")
-        print(f"Speed            : {message['speed']} km/h")
-        print(f"Fuel Level       : {message['fuel_level']}%")
-        print(f"Temperature      : {message['temperature']}°C")
-        print(f"Status           : {message['status']}")
-        print(f"Timestamp        : {message['timestamp']}")
-        print("=" * 60)
+        print("\n" + "=" * 70)
+        print(f"🚚 {message['truck_id']} | Driver: {message['driver']}")
+        print("-" * 70)
+        print(f"🛣️ Route            : {message['route']}")
+        print(f"📍 Current Location : {message['current_location']}")
+        print(f"🚗 Speed            : {message['speed']} km/h")
+        print(f"⛽ Fuel             : {message['fuel_level']}%")
+        print(f"🌡️ Temperature      : {message['temperature']}°C")
+        print(f"📊 Status           : {message['status']}")
+        print(f"🕒 Timestamp        : {message['timestamp']}")
+        print("=" * 70)
 
         time.sleep(2)
 
 except KeyboardInterrupt:
-    print("\nProducer stopped by user.")
+    print("\n🛑 Producer stopped by user.")
 
 finally:
     producer.close()
